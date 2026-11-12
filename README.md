@@ -29,6 +29,8 @@
 
 Escanear el código QR resultante desde la app **Expo Go** en el celular.
 
+Esperar la descarga de todos los elementos en el celular.
+
 ## 3. Dependencias del Proyecto
 
 A continuación se detallan todas las librerías empleadas y su justificación técnica:
