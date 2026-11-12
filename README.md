@@ -2,6 +2,8 @@
 
 # Blue Whales — Manual de Instrucciones y Documentación Técnica
 
+Repositorio github: https://github.com/Giupponi/Aplicaciones-ProyectoFinal.git
+
 ## 1. Descripción
 
 **Blue Whales** es una aplicación móvil desarrollada con **React Native**, **TypeScript** y **Expo**. Su propósito es permitir a los usuarios gestionar su colección personal de videojuegos, seguir estadísticas de juego en tiempo real y personalizar su perfil utilizando la cámara nativa del celular.
