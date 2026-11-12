@@ -1,5 +1,6 @@
 // Este archivo se encarga de guardar el usuario registrado y validar el inicio de sesión.
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface Usuario {
     nombre: string;
@@ -11,18 +12,59 @@ export interface Usuario {
 
 interface AuthContextType {
     usuario: Usuario | null;
-    registrarUsuario: (datos: Omit<Usuario, 'fechaRegistro'>) => void;
+    cargandoUsuario: boolean;
+    errorCargaUsuario: boolean;
+    registrarUsuario: (datos: Omit<Usuario, 'fechaRegistro'>) => Promise<void>;
     iniciarSesion: (email: string, password: string) => boolean;
     actualizarFotoPerfil: (uri: string) => void;
     cerrarSesion: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const CLAVE_USUARIO = 'usuario';
+
+const esUsuario = (valor: unknown): valor is Usuario =>
+    typeof valor === 'object' &&
+    valor !== null &&
+    'nombre' in valor &&
+    typeof valor.nombre === 'string' &&
+    'email' in valor &&
+    typeof valor.email === 'string' &&
+    'password' in valor &&
+    typeof valor.password === 'string' &&
+    'fotoPerfil' in valor &&
+    (typeof valor.fotoPerfil === 'string' || valor.fotoPerfil === null) &&
+    'fechaRegistro' in valor &&
+    typeof valor.fechaRegistro === 'string';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [usuario, setUsuario] = useState<Usuario | null>(null);
+    const [cargandoUsuario, setCargandoUsuario] = useState(true);
+    const [errorCargaUsuario, setErrorCargaUsuario] = useState(false);
 
-    const registrarUsuario = (datos: Omit<Usuario, 'fechaRegistro'>) => {
+    useEffect(() => {
+        const cargarUsuario = async () => {
+            try {
+                const datosGuardados = await AsyncStorage.getItem(CLAVE_USUARIO);
+                if (datosGuardados) {
+                    const usuarioGuardado: unknown = JSON.parse(datosGuardados);
+                    if (!esUsuario(usuarioGuardado)) {
+                        throw new Error('Los datos guardados no son válidos.');
+                    }
+                    setUsuario(usuarioGuardado);
+                }
+            } catch (error) {
+                console.error('No se pudo cargar la cuenta guardada:', error);
+                setErrorCargaUsuario(true);
+            } finally {
+                setCargandoUsuario(false);
+            }
+        };
+
+        void cargarUsuario();
+    }, []);
+
+    const registrarUsuario = async (datos: Omit<Usuario, 'fechaRegistro'>) => {
         const nuevoUsuario: Usuario = {
             ...datos,
             fechaRegistro: new Date().toLocaleDateString('es-ES', {
@@ -31,7 +73,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }),
         };
 
-        setUsuario(nuevoUsuario);
+            await AsyncStorage.setItem(CLAVE_USUARIO, JSON.stringify(nuevoUsuario));
+            setUsuario(nuevoUsuario);
     };
 
     const iniciarSesion = (email: string, password: string): boolean => {
@@ -60,6 +103,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         <AuthContext.Provider
             value={{
                 usuario,
+                cargandoUsuario,
+                errorCargaUsuario,
                 registrarUsuario,
                 iniciarSesion,
                 actualizarFotoPerfil,

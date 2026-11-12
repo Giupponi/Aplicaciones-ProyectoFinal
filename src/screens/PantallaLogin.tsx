@@ -12,12 +12,18 @@ type LoginNavegacionProp = NativeStackNavigationProp<ListaParametrosStack>;
 
 export const PantallaLogin = () => {
     const navigation = useNavigation<LoginNavegacionProp>();
-    const { iniciarSesion } = useAuth();
+    const { iniciarSesion, cargandoUsuario, errorCargaUsuario } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
     const manejarInicioSesion = () => {
+        if (cargandoUsuario) return;
+        if (errorCargaUsuario) {
+            setError('No se pudo cargar la cuenta guardada. Cerrá y volvé a abrir la app.');
+            return;
+        }
+
         if (email.trim() === '' || password.trim() === '') {
             setError('Por favor ingresá tu email y contraseña.');
             return;
@@ -79,7 +85,11 @@ export const PantallaLogin = () => {
 
                 {error ? <Text style={styles.error}>{error}</Text> : null}
 
-                <TouchableOpacity style={styles.botonIngresar} onPress={manejarInicioSesion}>
+                <TouchableOpacity
+                    style={styles.botonIngresar}
+                    onPress={manejarInicioSesion}
+                    disabled={cargandoUsuario}
+                >
                     <Text style={styles.textoBotonIngresar}>Iniciar Sesión</Text>
                 </TouchableOpacity>
 

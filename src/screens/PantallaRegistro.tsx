@@ -15,20 +15,31 @@ export const PantallaRegistro = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const { registrarUsuario } = useAuth();
+    const { registrarUsuario, cargandoUsuario, errorCargaUsuario } = useAuth();
 
-    const manejarRegistro = () => {
+    const manejarRegistro = async () => {
+        if (cargandoUsuario || errorCargaUsuario) {
+            setError('No se pudo cargar la cuenta guardada. Cerrá y volvé a abrir la app.');
+            return;
+        }
+
         if (nombre.trim() === '' || email.trim() === '' || password.trim() === '') {
             setError('Completá todos los campos para registrarte.');
             return;
         }
 
-        registrarUsuario({
-            nombre: nombre.trim(),
-            email: email.trim(),
-            password,
-            fotoPerfil: null,
-        });
+        try {
+            await registrarUsuario({
+                nombre: nombre.trim(),
+                email: email.trim(),
+                password,
+                fotoPerfil: null,
+            });
+        } catch (error) {
+            console.error('No se pudo guardar la cuenta:', error);
+            setError('No se pudo guardar la cuenta. Intentá de nuevo.');
+            return;
+        }
 
         navigation.reset({
             index: 0,
@@ -89,7 +100,11 @@ export const PantallaRegistro = () => {
 
                 {error ? <Text style={styles.error}>{error}</Text> : null}
 
-                <TouchableOpacity style={styles.botonRegistrar} onPress={manejarRegistro}>
+                <TouchableOpacity
+                    style={styles.botonRegistrar}
+                    onPress={manejarRegistro}
+                    disabled={cargandoUsuario}
+                >
                     <Text style={styles.textoBotonRegistrar}>Registrarme</Text>
                 </TouchableOpacity>
 
