@@ -72,8 +72,6 @@ export const PantallaLogin = () => {
                     <Text style={styles.etiqueta}>Contraseña</Text>
                     <TextInput
                         style={styles.input}
-                        //placeholder="••••••••"
-                        //placeholderTextColor={colores.textoSecundario}
                         secureTextEntry
                         value={password}
                         onChangeText={(value) => {
