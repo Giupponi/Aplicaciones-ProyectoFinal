@@ -37,6 +37,10 @@ A continuación se detallan todas las librerías empleadas y su justificación t
 
 expo, react y react-native, typescript, @react-navigation/native, @react-navigation/native-stack, @react-navigation/bottom-tabs, react-native-screens, react-native-safe-area-context, @expo/vector-icons, expo-image-picker, expo-status-bar
 
+## 4. Estructura de Ramas en Git
+
+* main: Rama limpia reservada para documentación inicial y entregables generales.
+* Rama de Proyecto "Proyecto-principal: Contiene el código fuente completo de la aplicación.
 
 ## Asistencia de Herramientas de IA
 
@@ -44,4 +48,4 @@ Durante la construcción del proyecto se utilizaron las siguientes herramientas 
 
 * **Gemini (NotebookLM)**: Guía de arquitectura móvil en React Native, depuración de errores de TypeScript/React Navigation e implementación de expo-image-picker y React Context.
 * **Claude**: Asistencia en la sintaxis y secuencia de comandos de Git.
-* **GitHub Copilot**: Soporte en la gestión del repositorio y organización de la rama principal (main) y ramas secundarias.
+* **GitHub Copilot**: Soporte en la gestión del repositorio y organización de la rama principal (main) y ramas secundarias. Asi como tambien solucion de errores en las pantallas de login y registrar.
